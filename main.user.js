@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SpeckMichs Die Stämme Tool Collection
 // @namespace    https://ds.rero.space
-// @version      3.4.0
+// @version      3.4.1
 // @description  Erweitert die Die Stämme Erfahrung mit einigen Tools und Skripten
 // @author       SpeckMich
 // @connect      ds.rero.space
@@ -23,7 +23,7 @@
 // @run-at       document-end
 // ==/UserScript==
 
-(() => {
+(async () => {
   "use strict";
 
   /** ---------------------------------------
@@ -37,6 +37,54 @@
       map: [],
     },
   };
+
+  async function checkDsAccess() {
+    const pageWindow =
+      typeof unsafeWindow !== "undefined" && unsafeWindow ? unsafeWindow : window;
+    const accountName = String(
+      pageWindow?.game_data?.player?.name ||
+        window?.game_data?.player?.name ||
+        ""
+    ).trim();
+    const world = String(window.location.hostname.split(".")[0] || "").trim();
+
+    const deny = () => {
+      console.warn("[DS-Tools] Account not allowed", accountName, world);
+      return false;
+    };
+
+    if (!accountName || !world || typeof GM_xmlhttpRequest !== "function") {
+      return deny();
+    }
+
+    const url =
+      "https://ds.rero.space/api/access?account=" +
+      encodeURIComponent(accountName) +
+      "&world=" +
+      encodeURIComponent(world);
+
+    return await new Promise((resolve) => {
+      GM_xmlhttpRequest({
+        method: "GET",
+        url,
+        timeout: 10000,
+        onload: (res) => {
+          try {
+            if (res.status < 200 || res.status >= 300) return resolve(deny());
+            const data = JSON.parse(res.responseText || "{}");
+            if (data?.allowed !== true) return resolve(deny());
+            resolve(true);
+          } catch {
+            resolve(deny());
+          }
+        },
+        onerror: () => resolve(deny()),
+        ontimeout: () => resolve(deny()),
+      });
+    });
+  }
+
+  if (!(await checkDsAccess())) return;
 
   // --- Global BotGuard (top-level hard stop) -----------------------------------
   const DS_BotGuard = (() => {
