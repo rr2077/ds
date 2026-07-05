@@ -58,6 +58,8 @@ async function main() {
       "!dist/**",
       "!.git/**",
       "!scripts/**",
+      "!_private/**",
+      "!server/**",
       "!package.json",
       "!package-lock.json"
     ],
