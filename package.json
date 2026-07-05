@@ -1,0 +1,27 @@
+{
+  "name": "ds",
+  "version": "1.0.0",
+  "description": "Modulare Userscript-Sammlung fuer Die Staemme. Die Module werden ueber `main.user.js` geladen und anhand von `config/manifest.prod.json` von `ds.rero.space` nachgeladen.",
+  "main": "main.user.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node scripts/build.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rr2077/ds.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/rr2077/ds/issues"
+  },
+  "homepage": "https://github.com/rr2077/ds#readme",
+  "devDependencies": {
+    "fast-glob": "^3.3.3",
+    "fs-extra": "^11.3.6",
+    "javascript-obfuscator": "^5.4.3"
+  }
+}
