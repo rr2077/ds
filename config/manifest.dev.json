@@ -72,6 +72,14 @@
         "compliance": "legal"
       },
       {
+        "url": "modules/timingMaster.js",
+        "id": "timingMaster",
+        "title": "Versammlungsplatz: Timing-Modul",
+        "desc": "Setzt Ankunfts- oder Sendezeit mit ms-Offset und kann Incomings als Vorlage verwenden.",
+        "defaultEnabled": false,
+        "compliance": "illegal"
+      },
+      {
         "url": "modules/autoSender.js",
         "id": "autoSender",
         "title": "Versammlungsplatz: Auto-Sender",
@@ -338,4 +346,3 @@
     ]
   }
 }
-

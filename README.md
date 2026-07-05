@@ -1,4 +1,4 @@
-# SpeckMichs Die Staemme Tool Collection
+# reros Die Staemme Tool Collection
 
 Modulare Userscript-Sammlung fuer Die Staemme. Die Module werden ueber `main.user.js` geladen und anhand von `config/manifest.prod.json` von `ds.rero.space` nachgeladen.
 

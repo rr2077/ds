@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         DS → AM Farm Auto Clicker
-// @namespace    speckmich.amfarm
+// @namespace    rero.amfarm
 // @version      0.1.3
 // @description  Auto-Klick für Farm-Assistent (A/B) mit UI + DSGuards
 // @match        https://*.die-staemme.de/game.php?*&screen=am_farm*

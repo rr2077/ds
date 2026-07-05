@@ -1,2 +1,10 @@
 node_modules/
 dist/
+
+# versehentlich angelegter Git-/Repo-Unterordner
+ds/
+
+# Sonstiges
+*.log
+.DS_Store
+Thumbs.db

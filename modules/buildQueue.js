@@ -1,7 +1,7 @@
 // modules/buildBot.js
 // DS → Build Bot (integrated TKK-style) — BOT-SCHUTZ SAFE
 // Loads on: screen=main
-// Author: SpeckMich (integration), original concept by TiKayKhan
+// Author: rero (integration), original concept by TiKayKhan
 
 /* global game_data, $, jQuery, UI, TWMap, GM, unsafeWindow */
 (function () {

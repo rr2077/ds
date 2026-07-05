@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name         SpeckMichs Die Stämme Tool Collection
+// @name         reros Die Stämme Tool Collection
 // @namespace    https://ds.rero.space
 // @version      3.4.1
 // @description  Erweitert die Die Stämme Erfahrung mit einigen Tools und Skripten
-// @author       SpeckMich
+// @author       rero
 // @connect      ds.rero.space
 // @connect      localhost
 // @connect      discord.com
@@ -1234,6 +1234,5 @@
     }
   })();
 })();
-
 
 
