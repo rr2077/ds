@@ -8,7 +8,7 @@
         "id": "incReminder",
         "title": "Discord: Inc-Reminder",
         "desc": "Sendet Discord-Nachricht bei neuen Angriffen. Vorraussetzung ist eine eingetragene Discord-Webhook-URL, siehe ganz oben.",
-        "defaultEnabled": false,
+        "defaultEnabled": true,
         "compliance": "legal"
       },
       {
@@ -42,7 +42,7 @@
         "id": "farmAssistantAuto",
         "title": "Farm-Assistent: Auto Farmer",
         "desc": "Klickt durch den Farm-Assistent,",
-        "defaultEnabled": false,
+        "defaultEnabled": true,
         "compliance": "illegal"
       }
     ],
@@ -72,11 +72,11 @@
         "compliance": "legal"
       },
       {
-        "url": "modules/timingMaster.js",
-        "id": "timingMaster",
-        "title": "Versammlungsplatz: Timing-Modul",
-        "desc": "Setzt Ankunfts- oder Sendezeit mit ms-Offset und kann Incomings als Vorlage verwenden.",
-        "defaultEnabled": false,
+        "url": "modules/timingMasterMexican.js",
+        "id": "timingMasterMexican",
+        "title": "Versammlungsplatz: Timing Master – Mexikaner",
+        "desc": "Setzt Ankunfts- oder Sendezeit inklusive Millisekunden-Offset und Countdown.",
+        "defaultEnabled": true,
         "compliance": "illegal"
       },
       {
@@ -84,7 +84,7 @@
         "id": "autoSender",
         "title": "Versammlungsplatz: Auto-Sender",
         "desc": "Automatisierte Sende-Flows. Wenn ein Angriff von DS-Ultimate kommt, wird dieser direkt weitergeklickt.",
-        "defaultEnabled": false,
+        "defaultEnabled": true,
         "compliance": "illegal"
       },
       {
@@ -108,7 +108,7 @@
         "id": "autoScavenge",
         "title": "Versammlungsplatz: Raubzug-Automatisierung",
         "desc": "Automatisches Scavenging / Raubzüge.",
-        "defaultEnabled": false,
+        "defaultEnabled": true,
         "compliance": "illegal"
       },
       {
@@ -124,7 +124,7 @@
         "id": "babaFarmer",
         "title": "Versammlungsplatz: Barbarendorf-Farmer",
         "desc": "Automatisches Farmen von Barbarendörfern.",
-        "defaultEnabled": false,
+        "defaultEnabled": true,
         "compliance": "illegal"
       },
       {
@@ -138,11 +138,11 @@
     ],
     "train": [
       {
-        "url": "modules/autoRecruit.js",
-        "id": "autoRecruit",
-        "title": "Rekrutierung: Automatisierte Rekrutierung",
-        "desc": "Automatisches Rekrutieren von Einheiten über Massen-Rekrutierung. ",
-        "defaultEnabled": false,
+        "url": "modules/troopProduction.js",
+        "id": "troopProduction",
+        "title": "Rekrutierung: Truppenproduktion",
+        "desc": "Rekrutiert die konfigurierten Einheiten automatisch nach.",
+        "defaultEnabled": true,
         "compliance": "illegal"
       }
     ],
@@ -176,7 +176,7 @@
         "id": "lineMap",
         "title": "Karte: Linien-Tool",
         "desc": "Zeichnet Verbindungen/Markierungen auf der Karte. Dieses Modul deaktivieren, solltest du ein anderen User-Skript für deine Korridor-Karten benutzen",
-        "defaultEnabled": false,
+        "defaultEnabled": true,
         "compliance": "legal"
       },
       {
@@ -200,7 +200,7 @@
         "id": "mapHoverHelper",
         "title": "Karte: Erweiterte Hover-Infos",
         "desc": "Beim Hover über ein Dorf werden zusätzliche Informationen aus dem letzten Bericht angezeigt.",
-        "defaultEnabled": false,
+        "defaultEnabled": true,
         "compliance": "legal"
       },
       {
@@ -213,6 +213,14 @@
       }
     ],
     "overview_villages": [
+      {
+        "url": "modules/autoBuilderMulti.js",
+        "id": "autoBuilderMulti",
+        "title": "Dörferübersicht: Auto Builder Multi",
+        "desc": "Baut Gebäude anhand einer Vorlage über mehrere Dörfer hinweg aus.",
+        "defaultEnabled": true,
+        "compliance": "illegal"
+      },
       {
         "url": "modules/overviewCombined.js",
         "id": "overviewCombined",
@@ -262,7 +270,7 @@
         "id": "timingSaver",
         "title": "DS-Ultimate: Timing Saver",
         "desc": "Speichert/übernimmt Angriffs-Timings aus DS-Ultimate. Vorraussetzung für den DS-Ultimate Auto-Sender",
-        "defaultEnabled": false,
+        "defaultEnabled": true,
         "compliance": "illegal"
       },
       {
@@ -270,7 +278,7 @@
         "id": "ultimateAutoSender",
         "title": "DS-Ultimate: Auto-Sender",
         "desc": "Erlaubt das automatische senden von Angriffen über einen DS-Ultimate Angriffsplan. Benötigt Versammlungsplatz: Auto-Sender",
-        "defaultEnabled": false,
+        "defaultEnabled": true,
         "compliance": "illegal"
       }
     ],
@@ -323,7 +331,7 @@
       "id": "reportInfo",
       "title": "Berichte: Zusätzliche Infos",
       "desc": "Erweiterte Anzeigen im Bericht",
-      "defaultEnabled": false,
+      "defaultEnabled": true,
       "compliance": "legal"
     },
     "main": [
@@ -336,11 +344,11 @@
         "compliance": "legal"
       },
       {
-        "url": "modules/buildQueue.js",
-        "id": "buildQueue",
-        "title": "Hauptgebäude: Ausbau-Bot",
-        "desc": "Baut automatisch Gebäude aus. Besonders nützlich für das Early-Game.",
-        "defaultEnabled": false,
+        "url": "modules/autoBuilderSingle.js",
+        "id": "autoBuilderSingle",
+        "title": "Hauptgebäude: Auto Builder Single",
+        "desc": "Baut das aktuelle Dorf automatisch anhand einer konfigurierbaren Vorlage aus.",
+        "defaultEnabled": true,
         "compliance": "illegal"
       }
     ]

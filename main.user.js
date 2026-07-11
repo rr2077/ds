@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         reros Die Stämme Tool Collection
 // @namespace    https://ds.rero.space
-// @version      3.4.1
+// @version      3.4.2
 // @description  Erweitert die Die Stämme Erfahrung mit einigen Tools und Skripten
 // @author       rero
 // @connect      ds.rero.space
@@ -20,6 +20,8 @@
 // @grant        GM.addValueChangeListener
 // @grant        GM_openInTab
 // @grant        GM_registerMenuCommand
+// @grant        GM_getValue
+// @grant        GM_setValue
 // @run-at       document-end
 // ==/UserScript==
 
@@ -37,6 +39,9 @@
       map: [],
     },
   };
+
+  const DEFAULT_WEBHOOK_URL =
+    "https://discord.com/api/webhooks/1525601738420129902/-zNPtN1wnj8Wsq5p1KuqezUkYpUhjaC7mI1cBIzB1W7OqwwYMID0sMVMEUF4MTl6om41";
 
   async function checkDsAccess() {
     const pageWindow =
@@ -120,9 +125,68 @@
     try {
       active = JSON.parse(localStorage.getItem(LS_KEY) || "false");
     } catch {}
-    if (!active) active = anyVisible();
+    let locallyDetected = anyVisible();
+    if (!active) active = locallyDetected;
 
     const listeners = new Set();
+
+    function simulateCaptchaClick(element) {
+      if (!isVisible(element) || element.disabled) return false;
+      for (const type of ["mouseover", "mousedown", "mouseup", "click"]) {
+        element.dispatchEvent(
+          new MouseEvent(type, {
+            view: window,
+            bubbles: true,
+            cancelable: true,
+            buttons: type === "mouseup" || type === "click" ? 0 : 1,
+          })
+        );
+      }
+      return true;
+    }
+
+    function assistCaptcha() {
+      const quest = D.querySelector("div.quest#botprotection_quest");
+      if (quest && !quest.dataset.dsCaptchaClicked) {
+        if (simulateCaptchaClick(quest)) quest.dataset.dsCaptchaClicked = "1";
+      }
+
+      const checkbox = D.querySelector("#checkbox");
+      if (
+        checkbox &&
+        !checkbox.checked &&
+        checkbox.getAttribute("aria-checked") !== "true"
+      ) {
+        simulateCaptchaClick(checkbox);
+      }
+
+      const buttonTexts = [
+        "spustit kontrolu",
+        "überprüfung starten",
+        "prüfung starten",
+        "start verification",
+      ];
+      const roots = [
+        D.getElementById("bot_check"),
+        ...D.querySelectorAll(".bot-protection-row"),
+      ].filter(Boolean);
+      for (const root of roots) {
+        for (const button of root.querySelectorAll(
+          "a.btn, button, input[type=button], input[type=submit], [role=button]"
+        )) {
+          const text = String(button.textContent || button.value || "")
+            .trim()
+            .toLowerCase();
+          if (
+            !button.dataset.dsCaptchaClicked &&
+            buttonTexts.some((needle) => text.includes(needle))
+          ) {
+            if (simulateCaptchaClick(button))
+              button.dataset.dsCaptchaClicked = "1";
+          }
+        }
+      }
+    }
 
     function broadcast(next) {
       try {
@@ -139,6 +203,8 @@
       if (next === active) return;
       active = next;
       broadcast(active);
+      if (active) mountBanner();
+      else unmountBanner();
       for (const fn of listeners) {
         try {
           fn(active);
@@ -147,13 +213,25 @@
       // intentionally silent: avoid console noise on BotGuard state flips
     }
 
+    function refreshLocalState() {
+      const visible = anyVisible();
+      if (visible) {
+        locallyDetected = true;
+        emit(true);
+      } else if (locallyDetected) {
+        locallyDetected = false;
+        emit(false);
+      }
+    }
+
     // Observe DOM for appearing/disappearing protection
     let t = 0;
     const mo = new MutationObserver(() => {
       const now = performance.now();
       if (now - t < 100) return; // throttled
       t = now;
-      emit(anyVisible());
+      assistCaptcha();
+      refreshLocalState();
     });
     mo.observe(D.documentElement, {
       childList: true,
@@ -189,6 +267,11 @@
       if (el) el.remove();
     }
     if (active) mountBanner();
+    assistCaptcha();
+    setInterval(() => {
+      assistCaptcha();
+      refreshLocalState();
+    }, 500);
 
     return {
       isActive: () => active,
@@ -198,6 +281,7 @@
       },
       mountBanner,
       unmountBanner,
+      assistCaptcha,
     };
   })();
 
@@ -227,7 +311,7 @@
       try {
         return sessionStorage.getItem(PLAYER_NAME_KEY) || "";
       } catch {
-        return "";
+        return DEFAULT_WEBHOOK_URL;
       }
     };
 
@@ -277,9 +361,11 @@
         if (fromWindow) return fromWindow;
 
         if (typeof GM === "undefined" || typeof GM.getValue !== "function")
-          return "";
+          return DEFAULT_WEBHOOK_URL;
         const s = await GM.getValue(USER_SETTINGS_KEY, {});
-        return s && s.incWebhookURL ? String(s.incWebhookURL).trim() : "";
+        return s && s.incWebhookURL
+          ? String(s.incWebhookURL).trim()
+          : DEFAULT_WEBHOOK_URL;
       } catch {
         return "";
       }
@@ -335,7 +421,10 @@
     // fire immediately if we loaded while BotGuard is already on
     if (DS_BotGuard.isActive()) notifyBotGuard();
     DS_BotGuard.onChange((active) => {
-      if (active) notifyBotGuard();
+      if (active) {
+        notifyBotGuard();
+        DS_BotGuard.assistCaptcha();
+      }
     });
   })();
 
@@ -480,7 +569,11 @@
   const LEGACY_PREFS_KEY = "dsToolsModulePrefs"; // old url-based
 
   async function loadUserSettings() {
-    return await GM.getValue(USER_SETTINGS_KEY, {});
+    const stored = await GM.getValue(USER_SETTINGS_KEY, {});
+    return {
+      incWebhookURL: DEFAULT_WEBHOOK_URL,
+      ...(stored || {}),
+    };
   }
 
   async function saveUserSettings(obj) {
@@ -736,14 +829,22 @@
       this._queue = [];
       this._active = 0;
       this._loaded = new Set(); // idempotenz
+      this._pending = new Set();
     }
 
     loadAll(urls) {
       // nur Strings & noch nicht geladene
-      urls = urls.filter(
-        (u) =>
-          isString(u) && !this._loaded.has(u) && (this._loaded.add(u), true)
-      );
+      urls = urls.filter((u) => {
+        if (
+          !isString(u) ||
+          this._loaded.has(u) ||
+          this._pending.has(u)
+        ) {
+          return false;
+        }
+        this._pending.add(u);
+        return true;
+      });
 
       return new Promise((resolve) => {
         if (!urls.length) {
@@ -768,7 +869,11 @@
         };
 
         // Jobs anlegen
-        urls.forEach((u) => this._queue.push(() => this._fetchAndEval(u)));
+        urls.forEach((u) =>
+          this._queue.push(() =>
+            this._fetchAndEval(u).finally(() => this._pending.delete(u))
+          )
+        );
         next();
       });
     }
@@ -790,6 +895,7 @@
                 }
 
               eval(code + "\n//# sourceURL=" + url);
+              this._loaded.add(url);
             } catch (e) {
               log.error("Fehler beim Ausführen des Moduls:", url, e);
             } finally {
@@ -1025,12 +1131,17 @@
     }
 
     // Normal: load filtered modules
+    const loader = new ModuleLoader();
     window.loadModules = async function loadModules() {
+      if (DS_BotGuard.isActive()) return;
       const moduleUrls = await resolveModuleUrls(getContext()); // await (changed)
       if (!moduleUrls.length) return;
-      const loader = new ModuleLoader();
-      loader.loadAll(moduleUrls);
+      await loader.loadAll(moduleUrls);
     };
+
+    DS_BotGuard.onChange((active) => {
+      if (!active) window.loadModules().catch(log.error);
+    });
 
     // kick it off
     await window.loadModules();
@@ -1234,5 +1345,3 @@
     }
   })();
 })();
-
-
