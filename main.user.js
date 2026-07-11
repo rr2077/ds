@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         reros Die Stämme Tool Collection
+// @name         DS für Senioren
 // @namespace    https://ds.rero.space
 // @version      3.4.2
 // @description  Erweitert die Die Stämme Erfahrung mit einigen Tools und Skripten
@@ -11,7 +11,6 @@
 // @match        https://*.die-staemme.de/game.php?*
 // @match        https://*ds-ultimate.de/tools/attackPlanner/*
 // @match        https://twforge.net/worlds/*/planner/plans/*
-// @icon         https://ds.rero.space/assets/Okay_Emote_NoYellow.png
 // @updateURL    https://ds.rero.space/main.user.js
 // @downloadURL  https://ds.rero.space/main.user.js
 // @grant        GM_xmlhttpRequest
